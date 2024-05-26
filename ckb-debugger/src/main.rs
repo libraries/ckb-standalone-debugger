@@ -9,9 +9,9 @@ use ckb_script::{
     TransactionScriptsVerifier, TxVerifyEnv,
 };
 use ckb_types::core::cell::resolve_transaction;
-use ckb_types::core::HeaderView;
+use ckb_types::core::{hardfork, HeaderView};
 use ckb_types::packed::Byte32;
-use ckb_types::prelude::Entity;
+use ckb_types::prelude::{Entity, Pack};
 use ckb_vm::cost_model::estimate_cycles;
 use ckb_vm::decoder::build_decoder;
 use ckb_vm::error::Error;
@@ -286,14 +286,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &verifier_resource,
         &verifier_resource,
     )?;
-    let consensus = Arc::new(ConsensusBuilder::default().build());
-    let tx_env = Arc::new(TxVerifyEnv::new_commit(&HeaderView::new_advanced_builder().build()));
-    let mut verifier = TransactionScriptsVerifier::new(
-        Arc::new(verifier_resolve_transaction),
-        verifier_resource,
-        consensus.clone(),
-        tx_env.clone(),
-    );
+    let mut verifier = {
+        let hardforks = hardfork::HardForks {
+            ckb2021: hardfork::CKB2021::new_mirana().as_builder().rfc_0032(20).build().unwrap(),
+            ckb2023: hardfork::CKB2023::new_mirana().as_builder().rfc_0049(30).build().unwrap(),
+        };
+        let consensus = Arc::new(ConsensusBuilder::default().hardfork_switch(hardforks).build());
+        let (epoch_n, epoch_i, epoch_l) = match verifier_script_version {
+            ScriptVersion::V0 => (10, 0, 1),
+            ScriptVersion::V1 => (20, 0, 1),
+            ScriptVersion::V2 => (30, 0, 1),
+        };
+        let header_view = HeaderView::new_advanced_builder()
+            .epoch(ckb_types::core::EpochNumberWithFraction::new(epoch_n, epoch_i, epoch_l).pack())
+            .build();
+        let tx_env = Arc::new(TxVerifyEnv::new_commit(&header_view));
+        TransactionScriptsVerifier::new(
+            Arc::new(verifier_resolve_transaction),
+            verifier_resource,
+            consensus.clone(),
+            tx_env.clone(),
+        )
+    };
     verifier.set_debug_printer(Box::new(move |_hash: &Byte32, message: &str| {
         print!("{}", message);
         if !message.ends_with('\n') {
@@ -423,23 +437,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     if matches_mode == "fast" {
-        let mut machine = machine_init();
-        let bytes = machine.load_program(&verifier_program, &verifier_args_byte)?;
-        let transferred_cycles = transferred_byte_cycles(bytes);
-        machine.add_cycles(transferred_cycles)?;
-        let result = machine.run();
-        println!("Run result: {:?}", result);
-        println!("Total cycles consumed: {}", HumanReadableCycles(machine.cycles()));
-        println!(
-            "Transfer cycles: {}, running cycles: {}",
-            HumanReadableCycles(transferred_cycles),
-            HumanReadableCycles(machine.cycles() - transferred_cycles)
-        );
-        if let Ok(data) = result {
-            if data != 0 {
-                std::process::exit(254);
-            }
-        }
+        let cycles = verifier.verify_single(verifier_script_group_type, &verifier_script_hash, u64::MAX)?;
+        println!("Cycles: {}", cycles);
         return Ok(());
     }
 
