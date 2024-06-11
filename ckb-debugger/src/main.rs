@@ -45,6 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let matches = App::new("ckb-debugger")
         .version(crate_version!())
+        .arg(Arg::with_name("args").multiple(true))
         .arg(
             Arg::with_name("bin")
                 .long("bin")
@@ -59,6 +60,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .possible_values(&["input", "output"])
                 .help("Type of cell to run")
                 .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("decode")
+                .long("decode")
+                .help("Decode RISC-V instruction")
+                .takes_value(true)
+                .conflicts_with_all(&["bin", "tx-file"]),
+        )
+        .arg(
+            Arg::with_name("disable-overlapping-detection")
+                .long("disable-overlapping-detection")
+                .required(false)
+                .takes_value(false)
+                .help("Set to true to disable overlapping detection between stack and heap"),
         )
         .arg(Arg::with_name("dump-file").long("dump-file").help("Dump file name").takes_value(true))
         .arg(
@@ -89,7 +104,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .help("Performance profiling, specify output file for further use")
                 .takes_value(true),
         )
-        .arg(Arg::with_name("script-hash").long("script-hash").help("Script hash").takes_value(true))
+        .arg(
+            Arg::with_name("prompt")
+                .long("prompt")
+                .required(false)
+                .takes_value(false)
+                .help("Set to true to prompt for stdin input before executing"),
+        )
+        .arg(
+            Arg::with_name("read-file")
+                .long("read-file")
+                .help("Read content from local file or stdin. Then feed the content to syscall in scripts")
+                .takes_value(true),
+        )
         .arg(
             Arg::with_name("script-group-type")
                 .long("script-group-type")
@@ -98,6 +125,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .help("Script group type")
                 .takes_value(true),
         )
+        .arg(Arg::with_name("script-hash").long("script-hash").help("Script hash").takes_value(true))
         .arg(
             Arg::with_name("script-version")
                 .long("script-version")
@@ -124,40 +152,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .help("Set to true to enable step mode, where we print PC address for each instruction"),
         )
         .arg(
-            Arg::with_name("prompt")
-                .long("prompt")
-                .required(false)
-                .takes_value(false)
-                .help("Set to true to prompt for stdin input before executing"),
-        )
-        .arg(
             Arg::with_name("tx-file")
                 .long("tx-file")
                 .short("f")
                 .required_unless_one(&["bin", "decode"])
                 .help("Filename containing JSON formatted transaction dump")
                 .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("read-file")
-                .long("read-file")
-                .help("Read content from local file or stdin. Then feed the content to syscall in scripts")
-                .takes_value(true),
-        )
-        .arg(Arg::with_name("args").multiple(true))
-        .arg(
-            Arg::with_name("decode")
-                .long("decode")
-                .help("Decode RISC-V instruction")
-                .takes_value(true)
-                .conflicts_with_all(&["bin", "tx-file"]),
-        )
-        .arg(
-            Arg::with_name("disable-overlapping-detection")
-                .long("disable-overlapping-detection")
-                .required(false)
-                .takes_value(false)
-                .help("Set to true to disable overlapping detection between stack and heap"),
         )
         .get_matches();
 
@@ -172,9 +172,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches_max_cycles = matches.value_of("max-cycles").unwrap();
     let matches_mode = matches.value_of("mode").unwrap();
     let matches_pprof = matches.value_of("pprof");
+    let matches_prompt = matches.is_present("prompt");
     let matches_read_file_name = matches.value_of("read-file");
-    let matches_script_hash = matches.value_of("script-hash");
     let matches_script_group_type = matches.value_of("script-group-type");
+    let matches_script_hash = matches.value_of("script-hash");
     let matches_script_version = matches.value_of("script-version").unwrap();
     let matches_skip_end = matches.value_of("skip-end");
     let matches_skip_start = matches.value_of("skip-start");
@@ -490,8 +491,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             use probe::probe;
             use std::io::BufRead;
 
-            let prompt = matches.is_present("prompt");
-            if prompt {
+            if matches_prompt {
                 println!("Enter to start executing:");
                 let mut line = String::new();
                 std::io::stdin().lock().read_line(&mut line).expect("read");
