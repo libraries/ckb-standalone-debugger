@@ -650,6 +650,7 @@ dependencies = [
 name = "ckb-vm"
 version = "0.24.11"
 dependencies = [
+ "addr2line 0.17.0",
  "byteorder",
  "bytes",
  "cc",

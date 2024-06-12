@@ -17,7 +17,7 @@ ckb-chain-spec = { path = "/home/ubuntu/src/ckb/spec" }
 ckb-debugger-api = { path = "../ckb-debugger-api", version = "0.116.1" }
 ckb-hash = { path = "/home/ubuntu/src/ckb/util/hash" }
 ckb-mock-tx-types = { path = "../ckb-mock-tx-types", version = "0.116.1" }
-ckb-script = { path = "/home/ubuntu/src/ckb/script", default-features = false }
+ckb-script = { path = "/home/ubuntu/src/ckb/script", default-features = false, features = ["pprof"] }
 ckb-types = { path = "/home/ubuntu/src/ckb/util/types" }
 # ckb-vm = "0.24.11"
 ckb-vm = { path = "/home/ubuntu/src/ckb-vm" }

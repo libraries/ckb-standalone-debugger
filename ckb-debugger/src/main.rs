@@ -187,11 +187,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-    if matches_decode.is_some() {
-        decode_instruction(&matches_decode.unwrap())?;
-        return Ok(());
-    }
-
     let verifier_args: Vec<String> = matches_args.into_iter().map(|s| s.into()).collect();
     let verifier_args_byte: Vec<Bytes> = verifier_args.into_iter().map(|s| s.into()).collect();
     let verifier_max_cycles: u64 = matches_max_cycles.parse()?;
