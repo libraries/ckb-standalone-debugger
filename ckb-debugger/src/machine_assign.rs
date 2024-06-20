@@ -71,6 +71,7 @@ where
         dm.isa()
     }
 }
+
 impl<DL> SupportMachine for MachineAssign<DL>
 where
     DL: CellDataProvider + HeaderProvider + ExtensionProvider + Send + Sync + Clone + 'static,

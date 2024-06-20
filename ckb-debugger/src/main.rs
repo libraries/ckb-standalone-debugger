@@ -1,5 +1,8 @@
 use ckb_chain_spec::consensus::ConsensusBuilder;
-use ckb_debugger::{MachineAnalyzer, MachineAssign, MachineOverlap, MachineProfile, MachineStepLog};
+use ckb_debugger::{
+    FileOperation, FileStream, HumanReadableCycles, MachineAnalyzer, MachineAssign, MachineOverlap, MachineProfile,
+    MachineStepLog, Random, TimeNow,
+};
 use ckb_debugger_api::embed::Embed;
 use ckb_debugger_api::{check, get_script_hash_by_index, DummyResourceLoader};
 use ckb_mock_tx_types::{MockCellDep, MockInfo, MockInput, MockTransaction, ReprMockTransaction, Resource};
@@ -28,7 +31,6 @@ use gdbstub::{
     conn::ConnectionExt,
     stub::{DisconnectReason, GdbStub, GdbStubError},
 };
-use misc::{FileOperation, FileStream, HumanReadableCycles, Random, TimeNow};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     drop(env_logger::init());
