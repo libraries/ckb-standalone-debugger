@@ -15,11 +15,10 @@ use ckb_types::core::{Capacity, DepType, HeaderView, ScriptHashType, Transaction
 use ckb_types::packed::{Byte32, CellDep, CellInput, CellOutput, OutPoint, Script, ScriptOpt};
 use ckb_types::prelude::{Builder, Entity, Pack};
 use ckb_vm::cost_model::estimate_cycles;
-use ckb_vm::decoder::build_decoder;
+use ckb_vm::decoder::{DefaultDecoder, InstDecoder};
 use ckb_vm::error::Error;
 use ckb_vm::instructions::execute;
-use ckb_vm::{Bytes, CoreMachine, Register, SupportMachine};
-use ckb_vm::{DefaultMachineRunner, Syscalls};
+use ckb_vm::{Bytes, CoreMachine, DefaultMachineRunner, Register, SupportMachine, Syscalls};
 use ckb_vm_debug_utils::{GdbStubHandler, GdbStubHandlerEventLoop};
 use ckb_vm_fuzzing_utils::SynchronousSyscalls;
 use ckb_vm_syscall_tracer::{
@@ -43,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let default_gdb_listen = "127.0.0.1:9999";
     let default_max_cycles = format!("{}", 3_500_000_000u64);
     let default_mode = "fast";
-    let default_script_version = "2";
+    let default_script_version = "3";
     let default_script = "input.0.lock";
     let default_vm_id = ROOT_VM_ID.to_string();
 
@@ -321,6 +320,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "0" => ScriptVersion::V0,
         "1" => ScriptVersion::V1,
         "2" => ScriptVersion::V2,
+        "3" => ScriptVersion::V3,
         _ => panic!("Wrong script version"),
     };
     let verifier_script = || -> Result<Script, ScriptError> {
@@ -347,7 +347,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(verifier_script.calc_script_hash(), verifier_script_hash);
     let verifier_script_out_point = || -> Result<OutPoint, ScriptError> {
         match ScriptHashType::try_from(verifier_script.hash_type()).unwrap() {
-            ScriptHashType::Data | ScriptHashType::Data1 | ScriptHashType::Data2 => {
+            ScriptHashType::Data | ScriptHashType::Data1 | ScriptHashType::Data2 | ScriptHashType::Data3 => {
                 for e in &verifier_mock_tx.mock_info.cell_deps {
                     if ckb_hash::blake2b_256(&e.data) == verifier_script.code_hash().as_slice() {
                         return Ok(e.cell_dep.out_point());
@@ -394,12 +394,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let verifier_hardforks = hardfork::HardForks {
         ckb2021: hardfork::CKB2021::new_mirana().as_builder().rfc_0032(20).build().unwrap(),
         ckb2023: hardfork::CKB2023::new_mirana().as_builder().rfc_0049(30).build().unwrap(),
+        ckb2025: hardfork::CKB2025::new_mirana().as_builder().rfc_0099(40).build().unwrap(),
     };
     let verifier_consensus = Arc::new(ConsensusBuilder::default().hardfork_switch(verifier_hardforks).build());
     let verifier_epoch = match verifier_script_version {
         ScriptVersion::V0 => ckb_types::core::EpochNumberWithFraction::new(15, 0, 1),
         ScriptVersion::V1 => ckb_types::core::EpochNumberWithFraction::new(25, 0, 1),
         ScriptVersion::V2 => ckb_types::core::EpochNumberWithFraction::new(35, 0, 1),
+        ScriptVersion::V3 => ckb_types::core::EpochNumberWithFraction::new(45, 0, 1),
     };
     let verifier_header_view = HeaderView::new_advanced_builder().epoch(verifier_epoch.pack()).build();
     let verifier_tx_env = Arc::new(TxVerifyEnv::new_commit(&verifier_header_view));
@@ -603,14 +605,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ScriptVersion::V0 => ckb_vm::machine::VERSION0,
             ScriptVersion::V1 => ckb_vm::machine::VERSION1,
             ScriptVersion::V2 => ckb_vm::machine::VERSION2,
+            ScriptVersion::V3 => ckb_vm::machine::VERSION3,
         };
         let machine_core = ckb_vm::DefaultCoreMachine::<u64, ckb_vm::WXorXMemory<ckb_vm::FlatMemory<u64>>>::new(
             ckb_vm::ISA_IMC | ckb_vm::ISA_B | ckb_vm::ISA_MOP,
             machine_version,
             verifier_max_cycles,
         );
-        let machine_builder =
-            ckb_vm::DefaultMachineBuilder::new(machine_core).instruction_cycle_func(Box::new(estimate_cycles));
+        let machine_builder = ckb_vm::machine::RustDefaultMachineBuilder::new(machine_core)
+            .instruction_cycle_func(Box::new(estimate_cycles));
         let mut machine = machine_builder.syscall(Box::new(machine_syscall)).build();
 
         machine.load_program(&machine_program_elf, machine_args.into_iter().map(Ok)).unwrap();
@@ -744,7 +747,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         #[cfg(feature = "asm")]
         let mut machine = machine_init_asm().machine;
         machine.set_running(true);
-        let mut decoder = build_decoder::<u64>(verifier_script_version.vm_isa(), verifier_script_version.vm_version());
+        let mut decoder = DefaultDecoder::new::<u64>(
+            verifier_script_version.vm_isa(),
+            verifier_script_version.vm_version(),
+            machine.cfi(),
+        );
         let mut step_result = Ok(());
         while machine.running() && step_result.is_ok() {
             let pc = machine.pc().to_u64();

@@ -1,5 +1,5 @@
 use ckb_vm::cost_model::estimate_cycles;
-use ckb_vm::decoder::{Decoder, build_decoder};
+use ckb_vm::decoder::{DefaultDecoder, InstDecoder};
 use ckb_vm::instructions::instruction_length;
 use ckb_vm::machine::VERSION0;
 use ckb_vm::registers::{A0, SP};
@@ -192,7 +192,7 @@ impl MachineFlamegraph {
 
     pub fn step(
         &mut self,
-        decoder: &mut Decoder,
+        decoder: &mut DefaultDecoder,
         machine: &mut DefaultMachine<DefaultCoreMachine<u64, WXorXMemory<FlatMemory<u64>>>>,
     ) -> Result<(), Error> {
         let pc = machine.pc().to_u64();
@@ -322,7 +322,7 @@ impl MachineOverlap {
 
     pub fn step(
         &mut self,
-        decoder: &mut Decoder,
+        decoder: &mut DefaultDecoder,
         machine: &mut DefaultMachine<DefaultCoreMachine<u64, WXorXMemory<FlatMemory<u64>>>>,
         flamegraph: &MachineFlamegraph,
     ) -> Result<(), Error> {
@@ -555,6 +555,46 @@ impl CoreMachine for MachineAnalyzer {
     fn version(&self) -> u32 {
         self.machine.version()
     }
+
+    fn cfi(&self) -> ckb_vm::elf::CFI {
+        self.machine.cfi()
+    }
+
+    fn set_cfi(&mut self, cfi: ckb_vm::elf::CFI) {
+        self.machine.set_cfi(cfi)
+    }
+
+    fn elp(&self) -> u32 {
+        self.machine.elp()
+    }
+
+    fn set_elp(&mut self, elp: u32) {
+        self.machine.set_elp(elp)
+    }
+
+    fn ssp(&self) -> &Self::REG {
+        self.machine.ssp()
+    }
+
+    fn set_ssp(&mut self, ssp: &Self::REG) {
+        self.machine.set_ssp(ssp)
+    }
+
+    fn ss(&self) -> &[u8] {
+        self.machine.ss()
+    }
+
+    fn ss_mut(&mut self) -> &mut [u8] {
+        self.machine.ss_mut()
+    }
+
+    fn ra(&mut self, addr: &Self::REG) -> Result<Self::REG, Error> {
+        self.machine.ra(addr)
+    }
+
+    fn set_ra(&mut self, addr: &Self::REG, value: &Self::REG) -> Result<(), Error> {
+        self.machine.set_ra(addr, value)
+    }
 }
 
 impl Machine for MachineAnalyzer {
@@ -598,11 +638,11 @@ impl MachineAnalyzer {
         if self.isa() & ISA_MOP != 0 && self.version() == VERSION0 {
             return Err(Error::InvalidVersion);
         }
-        let mut decoder = build_decoder::<u64>(self.isa(), self.version());
+        let mut decoder = DefaultDecoder::new::<u64>(self.isa(), self.version(), self.machine.cfi());
         self.machine.set_running(true);
         while self.machine.running() {
             if self.machine.reset_signal() {
-                decoder.reset_instructions_cache();
+                decoder.reset_instructions_cache().unwrap();
                 self.flamegraph = MachineFlamegraph::new(&self.machine.code()).unwrap();
             }
             if self.enable_coverage > 0 {

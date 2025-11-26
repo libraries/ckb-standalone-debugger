@@ -2,9 +2,11 @@ use ckb_chain_spec::consensus::ConsensusBuilder;
 use ckb_mock_tx_types::{MockTransaction, ReprMockTransaction, Resource};
 use ckb_script::{ScriptGroupType, TransactionScriptsVerifier, TxVerifyEnv};
 use ckb_types::{
-    core::cell::resolve_transaction,
-    core::hardfork::{CKB2021, CKB2023, HardForks},
-    core::{Cycle, EpochNumberWithFraction, HeaderView},
+    core::{
+        Cycle, EpochNumberWithFraction, HeaderView,
+        cell::resolve_transaction,
+        hardfork::{CKB2021, CKB2023, CKB2025, HardForks},
+    },
     packed::Byte32,
     prelude::*,
 };
@@ -22,7 +24,11 @@ pub fn run(
     let resource = Resource::from_mock_tx(mock_tx)?;
     let resolve_transaction =
         resolve_transaction(mock_tx.core_transaction(), &mut HashSet::new(), &resource, &resource)?;
-    let hardforks = HardForks { ckb2021: CKB2021::new_dev_default(), ckb2023: CKB2023::new_dev_default() };
+    let hardforks = HardForks {
+        ckb2021: CKB2021::new_dev_default(),
+        ckb2023: CKB2023::new_dev_default(),
+        ckb2025: CKB2025::new_dev_default(),
+    };
     let consensus = Arc::new(ConsensusBuilder::default().hardfork_switch(hardforks).build());
     let epoch = EpochNumberWithFraction::new(0, 0, 1);
     let header = HeaderView::new_advanced_builder().epoch(epoch.pack()).build();

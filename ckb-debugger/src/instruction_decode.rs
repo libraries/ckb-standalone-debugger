@@ -1,4 +1,5 @@
 use crate::arch;
+use ckb_vm::elf::CFI;
 use ckb_vm::machine::VERSION2;
 
 /// Print information about an instruction to assist humans in analysis. Get inspired by
@@ -6,31 +7,31 @@ use ckb_vm::machine::VERSION2;
 pub fn instruction_decode(inst: u32) {
     let mut inst_tag = String::from("?");
     let mut inst_isa = String::from("?");
-    if let Some(i) = ckb_vm::instructions::i::factory::<u64>(inst, VERSION2) {
+    if let Some(i) = ckb_vm::instructions::i::factory::<u64>(0, inst, VERSION2, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "I".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::m::factory::<u64>(inst, VERSION2) {
+    if let Some(i) = ckb_vm::instructions::m::factory::<u64>(0, inst, VERSION2, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "M".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::a::factory::<u64>(inst, VERSION2) {
+    if let Some(i) = ckb_vm::instructions::a::factory::<u64>(0, inst, VERSION2, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "A".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::rvc::factory::<u64>(inst, VERSION2) {
+    if let Some(i) = ckb_vm::instructions::rvc::factory::<u64>(0, inst, VERSION2, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "C".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::b::factory::<u64>(inst, VERSION2) {
+    if let Some(i) = ckb_vm::instructions::b::factory::<u64>(0, inst, VERSION2, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
