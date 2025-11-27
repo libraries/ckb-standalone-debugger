@@ -293,7 +293,7 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 [[package]]
 name = "ckb-chain-spec"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "cacache",
  "ckb-constant",
@@ -315,7 +315,7 @@ dependencies = [
 [[package]]
 name = "ckb-constant"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "phf 0.12.1",
 ]
@@ -323,7 +323,7 @@ dependencies = [
 [[package]]
 name = "ckb-crypto"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-fixed-hash",
  "faster-hex",
@@ -335,7 +335,7 @@ dependencies = [
 [[package]]
 name = "ckb-dao-utils"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "byteorder",
  "ckb-error",
@@ -385,7 +385,7 @@ dependencies = [
 [[package]]
 name = "ckb-error"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "anyhow",
  "ckb-occupied-capacity",
@@ -396,7 +396,7 @@ dependencies = [
 [[package]]
 name = "ckb-fixed-hash"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-fixed-hash-core",
  "ckb-fixed-hash-macros",
@@ -405,7 +405,7 @@ dependencies = [
 [[package]]
 name = "ckb-fixed-hash-core"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb_schemars",
  "faster-hex",
@@ -416,7 +416,7 @@ dependencies = [
 [[package]]
 name = "ckb-fixed-hash-macros"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-fixed-hash-core",
  "proc-macro2",
@@ -427,7 +427,7 @@ dependencies = [
 [[package]]
 name = "ckb-gen-types"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "cfg-if",
  "ckb-error",
@@ -443,7 +443,7 @@ dependencies = [
 [[package]]
 name = "ckb-hash"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "blake2b-ref",
  "blake2b-rs",
@@ -452,7 +452,7 @@ dependencies = [
 [[package]]
 name = "ckb-jsonrpc-types"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-types",
  "ckb_schemars",
@@ -465,7 +465,7 @@ dependencies = [
 [[package]]
 name = "ckb-logger"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "log",
 ]
@@ -493,7 +493,7 @@ dependencies = [
 [[package]]
 name = "ckb-occupied-capacity"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-occupied-capacity-core",
  "ckb-occupied-capacity-macros",
@@ -502,7 +502,7 @@ dependencies = [
 [[package]]
 name = "ckb-occupied-capacity-core"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "serde",
 ]
@@ -510,7 +510,7 @@ dependencies = [
 [[package]]
 name = "ckb-occupied-capacity-macros"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-occupied-capacity-core",
  "quote",
@@ -520,7 +520,7 @@ dependencies = [
 [[package]]
 name = "ckb-pow"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "byteorder",
  "ckb-hash",
@@ -533,7 +533,7 @@ dependencies = [
 [[package]]
 name = "ckb-rational"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "numext-fixed-uint",
  "serde",
@@ -542,7 +542,7 @@ dependencies = [
 [[package]]
 name = "ckb-resource"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-system-scripts",
  "ckb-types",
@@ -556,7 +556,7 @@ dependencies = [
 [[package]]
 name = "ckb-script"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "byteorder",
  "ckb-chain-spec",
@@ -599,7 +599,7 @@ dependencies = [
 [[package]]
 name = "ckb-traits"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "ckb-types",
 ]
@@ -607,7 +607,7 @@ dependencies = [
 [[package]]
 name = "ckb-types"
 version = "1.0.0"
-source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#40f71c23f09d44f5a202cc410a1a8cf0662d97f2"
+source = "git+https://github.com/mohanson-fork/ckb?branch=cfi#fb88def3383b368f1d3fa698bbe4ed4d8fe542ee"
 dependencies = [
  "bit-vec",
  "bytes",
@@ -630,7 +630,7 @@ dependencies = [
 [[package]]
 name = "ckb-vm"
 version = "0.24.0"
-source = "git+https://github.com/nervosnetwork/ckb-vm?branch=cfi#51c41402ba0d9993ced63bcf0d8c0d4087ce18a5"
+source = "git+https://github.com/nervosnetwork/ckb-vm?branch=cfi#c36e96b41f9ff3d8d8e1ee8b5f3aa06328c47b10"
 dependencies = [
  "byteorder",
  "bytes",
@@ -662,7 +662,7 @@ dependencies = [
 [[package]]
 name = "ckb-vm-definitions"
 version = "0.24.0"
-source = "git+https://github.com/nervosnetwork/ckb-vm?branch=cfi#51c41402ba0d9993ced63bcf0d8c0d4087ce18a5"
+source = "git+https://github.com/nervosnetwork/ckb-vm?branch=cfi#c36e96b41f9ff3d8d8e1ee8b5f3aa06328c47b10"
 dependencies = [
  "paste",
 ]

@@ -1,37 +1,44 @@
 use crate::arch;
 use ckb_vm::elf::CFI;
-use ckb_vm::machine::VERSION2;
+use ckb_vm::machine::VERSION3;
 
 /// Print information about an instruction to assist humans in analysis. Get inspired by
 /// https://luplab.gitlab.io/rvcodecjs/.
 pub fn instruction_decode(inst: u32) {
     let mut inst_tag = String::from("?");
     let mut inst_isa = String::from("?");
-    if let Some(i) = ckb_vm::instructions::i::factory::<u64>(0, inst, VERSION2, CFI::default()) {
+    let cfi_all_bits = CFI { lp_unlabeled: true, ss: true, lp_func_sig: true };
+    if let Some(i) = ckb_vm::instructions::cfi::factory::<u64>(0, inst, VERSION3, cfi_all_bits) {
+        assert_eq!(inst_tag.as_str(), "?");
+        let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
+        inst_tag = tagged_instruction.to_string();
+        inst_isa = "CFI".to_string();
+    }
+    if let Some(i) = ckb_vm::instructions::i::factory::<u64>(0, inst, VERSION3, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "I".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::m::factory::<u64>(0, inst, VERSION2, CFI::default()) {
+    if let Some(i) = ckb_vm::instructions::m::factory::<u64>(0, inst, VERSION3, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "M".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::a::factory::<u64>(0, inst, VERSION2, CFI::default()) {
+    if let Some(i) = ckb_vm::instructions::a::factory::<u64>(0, inst, VERSION3, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "A".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::rvc::factory::<u64>(0, inst, VERSION2, CFI::default()) {
+    if let Some(i) = ckb_vm::instructions::rvc::factory::<u64>(0, inst, VERSION3, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
         inst_isa = "C".to_string();
     }
-    if let Some(i) = ckb_vm::instructions::b::factory::<u64>(0, inst, VERSION2, CFI::default()) {
+    if let Some(i) = ckb_vm::instructions::b::factory::<u64>(0, inst, VERSION3, CFI::default()) {
         assert_eq!(inst_tag.as_str(), "?");
         let tagged_instruction = ckb_vm::instructions::tagged::TaggedInstruction::try_from(i).unwrap();
         inst_tag = tagged_instruction.to_string();
